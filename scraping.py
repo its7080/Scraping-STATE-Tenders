@@ -90,7 +90,7 @@ OUTPUT_DIR = os.path.join(PROGRAM_FILES_DIR, "Output")
 LOG_DIR    = os.path.join(PROGRAM_FILES_DIR, "#log")
 CAP_DIR    = os.path.join(PROGRAM_FILES_DIR, "CAP")
 
-for _d in (DATA_FILES_DIR, TEMP_DIR, OUTPUT_DIR, LOG_DIR, CAP_DIR):
+for _d in (TEMP_DIR, OUTPUT_DIR, LOG_DIR, CAP_DIR):
     os.makedirs(_d, exist_ok=True)
 
 CONFIG_FILE   = os.path.join(PROGRAM_FILES_DIR, "Configration.json")
