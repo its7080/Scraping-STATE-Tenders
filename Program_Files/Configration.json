@@ -1,0 +1,24 @@
+{
+    "browser": "0",
+    "sender_email_id": "tenderautomation@royalconstruct.in",
+    "sender_email_password": "Auto@2023",
+    "notification_emailids": [
+        "am7059141480@gmail.com",
+        "anupammanna07@gmail.com"
+    ],
+    "dump_location": "F:\\STATE-Tenders_Main_running\\Data_Files\\dump",
+    "smtp_server": "smtp.office365.com",
+    "smtp_port": 587,
+    "email_subject": "State Tender Scraping Report",
+    "attach_log_to_email": true,
+    "max_workers": 4,
+    "captcha_attempts": 10,
+    "page_timeout_sec": 240,
+    "nav_retries": 8,
+    "page_load_wait_sec": 10,
+    "ecv_pass2_threshold": 99999999,
+    "output_dir": "C:\\Users\\its70\\OneDrive\\Documents\\python\\files\\z-final\\Program_Files\\Output",
+    "merged_file_prefix": "merged_State",
+    "delete_individual_after_merge": false,
+    "log_retention_days": 30
+}
