@@ -47,7 +47,8 @@ IMG_W       = 32          # patch width   (matches ~33px column width)
 NUM_CHARS   = 6           # every CAPTCHA has exactly 6 characters
 EPOCHS      = 50
 BATCH_SIZE  = 32
-MODEL_PATH  = "captcha_model.h5"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "captcha_model.h5")
 
 CHARSET     = list("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
 NUM_CLASSES = len(CHARSET)

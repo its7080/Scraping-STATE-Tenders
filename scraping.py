@@ -60,7 +60,7 @@ from email.mime.text import MIMEText
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeout
 
 # Single entry-point from captcha_ocr_main.py
-from captcha_ocr_main import option_detect
+from OCR.captcha_ocr_main import option_detect
 
 from Program_Files.scraping_library import (
     delete_folder,
