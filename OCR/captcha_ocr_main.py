@@ -48,7 +48,14 @@ NUM_CHARS   = 6           # every CAPTCHA has exactly 6 characters
 EPOCHS      = 50
 BATCH_SIZE  = 32
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(BASE_DIR)
+PROGRAM_FILES_DIR = os.path.join(ROOT_DIR, "Program_Files")
+OCR_OUTPUT_DIR = os.path.join(PROGRAM_FILES_DIR, "OCR")
+os.makedirs(OCR_OUTPUT_DIR, exist_ok=True)
+
 MODEL_PATH = os.path.join(BASE_DIR, "captcha_model.h5")
+PREPROCESS_PREVIEW_PATH = os.path.join(OCR_OUTPUT_DIR, "preprocess_preview.png")
+DETECTED_RESULT_PATH = os.path.join(OCR_OUTPUT_DIR, "detected_result.png")
 
 CHARSET     = list("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
 NUM_CLASSES = len(CHARSET)
@@ -117,7 +124,7 @@ def preprocess_image(image_path: str) -> np.ndarray:
 def show_preprocessing_preview(image_path: str):
     """
     Save side-by-side strip of all 3 preprocessing stages + column split overlay.
-    Output → preprocess_preview.png
+    Output → Program_Files/OCR/preprocess_preview.png
     """
     img = cv2.imread(image_path)
     if img is None:
@@ -157,7 +164,7 @@ def show_preprocessing_preview(image_path: str):
     ]
 
     strip = np.hstack(panels)
-    out   = "preprocess_preview.png"
+    out   = PREPROCESS_PREVIEW_PATH
     cv2.imwrite(out, strip)
     print(f"  [PREVIEW] Saved → '{out}'")
 
@@ -622,7 +629,7 @@ def option_detect(image_path=None):
         cv2.putText(vis, lbl, (xs+2, ys-3),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.55, color, 1)
 
-    out = "detected_result.png"
+    out = DETECTED_RESULT_PATH
     cv2.imwrite(out, vis)
     print(f"\n  Annotated result saved → '{out}'  (3× upscaled)")
     print("  (Green = correct  |  Red = mismatch)")
