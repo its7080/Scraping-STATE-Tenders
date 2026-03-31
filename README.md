@@ -42,6 +42,33 @@ python -m unittest tests/test_validation_utils.py
 python -m py_compile scraping.py scraping_gui.py OCR/captcha_ocr_main.py
 ```
 
+## Build standalone `.exe` (Windows)
+
+### Recommended (automated)
+Use the provided build script:
+
+```bat
+build_exe.bat
+```
+
+This will:
+- install build dependencies,
+- install Playwright Chromium binaries with `PLAYWRIGHT_BROWSERS_PATH=0`,
+- build via `scraping.spec`.
+
+Output:
+- folder: `dist\scraping\`
+- executable: `dist\scraping\scraping.exe`
+
+### Manual build (if needed)
+```bat
+python -m pip install --upgrade pip pyinstaller
+python -m pip install -r requirements.txt
+set PLAYWRIGHT_BROWSERS_PATH=0
+python -m playwright install chromium
+pyinstaller --clean scraping.spec
+```
+
 ## Improvement backlog
 
 A focused audit with concrete improvements is tracked in [`IMPROVEMENTS.md`](./IMPROVEMENTS.md).
