@@ -48,7 +48,10 @@ NUM_CHARS   = 6           # every CAPTCHA has exactly 6 characters
 EPOCHS      = 50
 BATCH_SIZE  = 32
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-OCR_OUTPUT_DIR = BASE_DIR
+ROOT_DIR = os.path.dirname(BASE_DIR)
+PROGRAM_FILES_DIR = os.path.join(ROOT_DIR, "Program_Files")
+OCR_OUTPUT_DIR = os.path.join(PROGRAM_FILES_DIR, "OCR")
+os.makedirs(OCR_OUTPUT_DIR, exist_ok=True)
 
 MODEL_PATH = os.path.join(BASE_DIR, "captcha_model.h5")
 PREPROCESS_PREVIEW_PATH = os.path.join(OCR_OUTPUT_DIR, "preprocess_preview.png")
