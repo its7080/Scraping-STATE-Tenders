@@ -54,11 +54,13 @@ build_exe.bat
 This will:
 - install build dependencies,
 - install Playwright Chromium binaries with `PLAYWRIGHT_BROWSERS_PATH=0`,
-- build via `scraping.spec`.
+- build via `scraping.spec` (engine) and `scraping_gui.spec` (GUI).
 
 Output:
 - folder: `dist\scraping\`
 - executable: `dist\scraping\scraping.exe`
+- folder: `dist\scraping_gui\`
+- executable: `dist\scraping_gui\scraping_gui.exe`
 
 ### Manual build (if needed)
 ```bat
@@ -67,6 +69,7 @@ python -m pip install -r requirements.txt
 set PLAYWRIGHT_BROWSERS_PATH=0
 python -m playwright install chromium
 pyinstaller --clean scraping.spec
+pyinstaller --clean scraping_gui.spec
 ```
 
 ## Improvement backlog

@@ -21,14 +21,20 @@ echo [4/5] Cleaning old build artifacts...
 if exist build rmdir /s /q build
 if exist dist rmdir /s /q dist
 
-echo [5/5] Building executable from scraping.spec...
+echo [5/6] Building executable from scraping.spec...
 pyinstaller --clean scraping.spec
+if errorlevel 1 goto :fail
+
+echo [6/6] Building executable from scraping_gui.spec...
+pyinstaller --clean scraping_gui.spec
 if errorlevel 1 goto :fail
 
 echo.
 echo Build complete.
-echo EXE folder: dist\scraping\
-echo Entry file: dist\scraping\scraping.exe
+echo Engine EXE folder: dist\scraping\
+echo Engine entry file: dist\scraping\scraping.exe
+echo GUI EXE folder:    dist\scraping_gui\
+echo GUI entry file:    dist\scraping_gui\scraping_gui.exe
 exit /b 0
 
 :fail
