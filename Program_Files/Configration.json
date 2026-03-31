@@ -11,7 +11,7 @@
     "smtp_port": 587,
     "email_subject": "State Tender Scraping Report",
     "attach_log_to_email": true,
-    "max_workers": 4,
+    "max_workers": 2,
     "captcha_attempts": 10,
     "page_timeout_sec": 240,
     "nav_retries": 8,
