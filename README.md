@@ -12,7 +12,7 @@ State Tenders automation tool with:
 - `Program_Files/Configration.json` — engine/runtime settings.
 - `Program_Files/search_criteria.json` — query criteria presets.
 - `Program_Files/Organization_list.txt` — portal name/URL list.
-- `OCR/` — OCR model + dataset utilities.
+- `Program_Files/OCR/` — runtime OCR module/data location (auto-migrated from legacy `OCR/`).
 - `Program_Files/OCR/` — generated OCR debug outputs (`preprocess_preview.png`, `detected_result.png`).
 
 ## Suggested setup

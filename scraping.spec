@@ -11,7 +11,7 @@ block_cipher = None
 
 datas = []
 datas += [("Program_Files", "Program_Files")]
-datas += [("OCR", "OCR")]
+datas += [("OCR", "Program_Files/OCR")]
 datas += collect_data_files("playwright")
 
 hiddenimports = []

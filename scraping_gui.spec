@@ -9,7 +9,7 @@ block_cipher = None
 
 datas = []
 datas += [("Program_Files", "Program_Files")]
-datas += [("OCR", "OCR")]
+datas += [("OCR", "Program_Files/OCR")]
 datas += [("app_logo.ico", ".")]
 datas += collect_data_files("playwright")
 datas += collect_data_files("customtkinter")

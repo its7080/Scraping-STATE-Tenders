@@ -124,7 +124,7 @@ def preprocess_image(image_path: str) -> np.ndarray:
 def show_preprocessing_preview(image_path: str):
     """
     Save side-by-side strip of all 3 preprocessing stages + column split overlay.
-    Output → Program_Files/OCR/preprocess_preview.png
+    Output → OCR/preprocess_preview.png
     """
     img = cv2.imread(image_path)
     if img is None:
