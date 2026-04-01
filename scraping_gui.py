@@ -46,6 +46,7 @@ from tkinter import messagebox, filedialog
 import customtkinter as ctk
 
 import scraping as engine
+from Program_Files.validation_utils import is_valid_portal_name, is_valid_portal_url
 
 
 # =======================
@@ -819,13 +820,44 @@ class SettingsPanel(ctk.CTkToplevel):
 
         # ── Tab 4: Portals → Organization_list.txt ────────────────────
         lines_out = []
+        enabled_lines = 0
+        invalid_portals = []
         for row in self._portal_rows:
             name    = row["name"].get().strip()
             url     = row["url"].get().strip()
             enabled = row["enabled"].get()
             if not name or not url:
                 continue
+            if not is_valid_portal_name(name):
+                invalid_portals.append(
+                    f"• {name or '<empty>'}: invalid portal name"
+                )
+                continue
+            if not is_valid_portal_url(url):
+                invalid_portals.append(
+                    f"• {name}: invalid URL '{url}'"
+                )
+                continue
             lines_out.append(f"{'# ' if not enabled else ''}{name}: {url}\n")
+            if enabled:
+                enabled_lines += 1
+
+        if invalid_portals:
+            messagebox.showerror(
+                "Portal validation error",
+                "Please fix invalid portal entries before saving:\n\n"
+                + "\n".join(invalid_portals),
+                parent=self,
+            )
+            return
+
+        if enabled_lines == 0:
+            messagebox.showerror(
+                "Portal validation error",
+                "At least one portal must be enabled before saving.",
+                parent=self,
+            )
+            return
 
         try:
             with open(engine.ORG_FILE, "w", encoding="utf-8") as f:

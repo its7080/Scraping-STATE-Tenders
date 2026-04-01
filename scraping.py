@@ -38,6 +38,7 @@ import json
 import logging
 import os
 import re
+import shutil
 import smtplib
 import socket
 import sys
@@ -59,17 +60,6 @@ from email.mime.text import MIMEText
 
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeout
 
-# Single entry-point from captcha_ocr_main.py
-from captcha_ocr_main import option_detect
-
-from Program_Files.scraping_library import (
-    delete_folder,
-    packaging,
-    create_folder_if_not_exists,
-    delete_xlsx_files,
-)
-
-
 # =======================
 # BASE DIRECTORY
 # =======================
@@ -77,6 +67,34 @@ if getattr(sys, "frozen", False):
     BASE_DIR = os.path.dirname(sys.executable)
 else:
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+# =======================
+# OCR LOCATION (migrated under Program_Files/OCR)
+# =======================
+PROGRAM_FILES_DIR = os.path.join(BASE_DIR, "Program_Files")
+PROGRAM_FILES_OCR_DIR = os.path.join(PROGRAM_FILES_DIR, "OCR")
+LEGACY_OCR_DIR = os.path.join(BASE_DIR, "OCR")
+
+if (not os.path.exists(PROGRAM_FILES_OCR_DIR)) and os.path.exists(LEGACY_OCR_DIR):
+    shutil.copytree(LEGACY_OCR_DIR, PROGRAM_FILES_OCR_DIR, dirs_exist_ok=True)
+
+if PROGRAM_FILES_OCR_DIR not in sys.path:
+    sys.path.insert(0, PROGRAM_FILES_OCR_DIR)
+
+try:
+    # Single entry-point from captcha_ocr_main.py (preferred location)
+    from captcha_ocr_main import option_detect
+except ImportError:
+    # Backward-compatible fallback when OCR remains at legacy root folder
+    from OCR.captcha_ocr_main import option_detect
+
+from Program_Files.scraping_library import (
+    delete_folder,
+    packaging,
+    create_folder_if_not_exists,
+    delete_xlsx_files,
+)
 
 
 # =======================
