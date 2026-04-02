@@ -28,13 +28,17 @@ if exist __pycache__ rmdir /s /q __pycache__
 echo [5/6] Building one-file EXE from scraping.py...
 pyinstaller --noconfirm --clean --onefile --name scraping ^
     !EXTRA_DATA! ^
+    --add-data Program_Files;Program_Files ^
+    --add-data app_logo.ico;. ^
     --collect-all playwright ^
+    --icon app_logo.ico ^
     scraping.py
 if errorlevel 1 goto :fail
 
 echo [6/6] Building one-file EXE from scraping_gui.py...
 pyinstaller --noconfirm --clean --onefile --windowed --name scraping_gui ^
     !EXTRA_DATA! ^
+    --add-data Program_Files;Program_Files ^
     --add-data app_logo.ico;. ^
     --collect-all playwright ^
     --collect-all customtkinter ^
