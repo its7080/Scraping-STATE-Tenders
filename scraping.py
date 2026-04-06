@@ -782,8 +782,8 @@ def send_mail(merged_file: str | None = None, attach_log: bool = False):
 # =======================
 # MERGE XLSX
 # =======================
-def merge_xlsx_files(source_dir: str, TEMP_DIR: str) -> str:
-    os.makedirs(TEMP_DIR, exist_ok=True)
+def merge_xlsx_files(source_dir: str, temp_dir: str) -> str:
+    os.makedirs(temp_dir, exist_ok=True)
     merged = pd.DataFrame()
     individual_files = []
 
@@ -802,7 +802,7 @@ def merge_xlsx_files(source_dir: str, TEMP_DIR: str) -> str:
             log.warning("Could not read %s: %s", fpath, exc)
 
     ts          = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    output_path = os.path.join(PROGRAM_FILES_DIR, f"{MERGED_FILE_PREFIX}_{ts}.xlsx")
+    output_path = os.path.join(temp_dir, f"{MERGED_FILE_PREFIX}_{ts}.xlsx")
     merged.to_excel(output_path, index=False)
     log.info("Master xlsx → %s", output_path)
 
@@ -1000,8 +1000,16 @@ def run_scraping():
             log.warning("Could not process %s: %s", fname, exc)
 
     log.info("Individual files saved to %s", OUTPUT_DIR)
-    merged_path = merge_xlsx_files(OUTPUT_DIR, OUTPUT_DIR)
+    merged_path = merge_xlsx_files(TEMP_DIR, TEMP_DIR)
     send_mail(merged_file=merged_path, attach_log=True)
+
+    if merged_path and os.path.exists(merged_path):
+        dest_path = os.path.join(OUTPUT_DIR, os.path.basename(merged_path))
+        try:
+            shutil.move(merged_path, dest_path)
+            log.info("Moved merged file to output folder: %s", dest_path)
+        except Exception as exc:
+            log.warning("Could not move merged file to output folder: %s", exc)
 
 
 # =======================
