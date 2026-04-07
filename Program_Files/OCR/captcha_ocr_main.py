@@ -49,8 +49,8 @@ EPOCHS      = 50
 BATCH_SIZE  = 32
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
-PROGRAM_FILES_DIR = os.path.join(ROOT_DIR, "Program_Files")
-OCR_OUTPUT_DIR = os.path.join(PROGRAM_FILES_DIR, "OCR")
+PROGRAM_FILES_DIR = os.path.join(ROOT_DIR, "OCR")
+OCR_OUTPUT_DIR = PROGRAM_FILES_DIR
 os.makedirs(OCR_OUTPUT_DIR, exist_ok=True)
 
 MODEL_PATH = os.path.join(BASE_DIR, "captcha_model.h5")

@@ -389,6 +389,45 @@ error_data:   dict = {}
 _captcha_lock = threading.Lock()
 
 
+
+
+
+def save_png_copy(cap_path: str, result: str, folder_path: str = "Program_Files/OCR/detected_sample_data_png_state") -> str:
+    """
+    Copy a PNG file to a target folder with a new name based on OCR result.
+
+    Args:
+        cap_path (str): Source PNG file path
+        result (str): OCR result (used as filename)
+        folder_path (str): Destination folder (default: OCR/detected_sample_data_png_state)
+
+    Returns:
+        str: Full path of saved file
+    """
+
+    # Ensure folder exists
+    os.makedirs(folder_path, exist_ok=True)
+
+    # Clean filename
+    file_name = str(result).strip()
+    file_name = re.sub(r'[\\/*?:"<>|]', "", file_name)
+
+    # Fallback if filename becomes empty
+    if not file_name:
+        file_name = "unknown"
+
+    # Destination path
+    dest_path = os.path.join(folder_path, f"{file_name}.png")
+
+    try:
+        # Copy file (preserve metadata)
+        shutil.copy2(cap_path, dest_path)
+
+        return dest_path
+
+    except Exception as e:
+        raise RuntimeError(f"Error saving PNG: {e}")
+    
 # =======================
 # CAPTCHA HELPER
 # =======================
@@ -425,7 +464,9 @@ def solve_captcha(img_b64: str, name: str) -> str | None:
         return None
 
     if result and re.match(r"^[A-Za-z0-9]{6}$", str(result).strip()):
+        saved_path = save_png_copy(cap_path, result)
         return str(result).strip()
+
 
     log.warning("[%s] CAPTCHA prediction '%s' failed validation.", name, result)
     return None
@@ -782,38 +823,80 @@ def send_mail(merged_file: str | None = None, attach_log: bool = False):
 # =======================
 # MERGE XLSX
 # =======================
+# =======================
+# MERGE XLSX
+# =======================
+
 def merge_xlsx_files(source_dir: str, temp_dir: str) -> str:
+    # Create temp directory if it doesn't exist
     os.makedirs(temp_dir, exist_ok=True)
+
+    # Create an empty DataFrame to store merged data
     merged = pd.DataFrame()
+
+    # List to store file paths of individual Excel files
     individual_files = []
 
+    # Loop through all files in the source directory
     for fname in os.listdir(source_dir):
+
+        # Skip files that are not .xlsx OR already merged files
         if not fname.endswith(".xlsx") or fname.startswith(MERGED_FILE_PREFIX):
             continue
+
+        # Full path of the file
         fpath = os.path.join(source_dir, fname)
+
         try:
+            # Read Excel file into DataFrame
             df = pd.read_excel(fpath)
+
+            # Drop columns where all values are NaN (empty columns)
             df = df.dropna(how="all", axis=1)
+
+            # Replace "NA" string values with 0.00
             df.replace("NA", 0.00, inplace=True)
+
+            # Add a new column "Get Date" with current date
             df["Get Date"] = datetime.datetime.now().strftime("%d/%m/%Y")
+
+            # Append current DataFrame to merged DataFrame
             merged = pd.concat([merged, df], ignore_index=True)
+
+            # Store file path for possible deletion later
             individual_files.append(fpath)
+
         except Exception as exc:
+            # Log warning if file cannot be read
             log.warning("Could not read %s: %s", fpath, exc)
 
-    ts          = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    output_path = os.path.join(temp_dir, f"{MERGED_FILE_PREFIX}_{ts}.xlsx")
+    # Create timestamp for unique output filename
+    ts = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+    # Define output file path
+    output_path = os.path.join(PROGRAM_FILES_DIR, f"{MERGED_FILE_PREFIX}_{ts}.xlsx")
+
+    # Save merged DataFrame to Excel file
     merged.to_excel(output_path, index=False)
+
+    # Log success message
     log.info("Master xlsx → %s", output_path)
 
+    # Optional: delete original individual files after merging
     if DELETE_INDIVIDUAL_AFTER_MERGE:
         for fpath in individual_files:
             try:
+                # Delete file
                 os.remove(fpath)
+
+                # Log deletion
                 log.info("Deleted individual file: %s", os.path.basename(fpath))
+
             except Exception as exc:
+                # Log warning if deletion fails
                 log.warning("Could not delete %s: %s", fpath, exc)
 
+    # Return the path of the merged Excel file
     return output_path
 
 
