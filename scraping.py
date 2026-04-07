@@ -464,7 +464,6 @@ def solve_captcha(img_b64: str, name: str) -> str | None:
         return None
 
     if result and re.match(r"^[A-Za-z0-9]{6}$", str(result).strip()):
-        saved_path = save_png_copy(cap_path, result)
         return str(result).strip()
 
 
@@ -654,6 +653,10 @@ class Extr:
             except Exception as exc:
                 log.warning("[%s] Form submit error: %s", self.name, exc)
                 continue
+            saved_path = save_png_copy(
+                cap_path=r"Program_Files/temp.png",  # raw string for Windows safety
+                result=captcha_text
+            )
             if "No Tenders found." in page.content():
                 log.info("[%s] Portal returned no tenders.", self.name)
                 return 0, None
