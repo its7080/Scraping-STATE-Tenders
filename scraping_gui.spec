@@ -1,7 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 from PyInstaller.utils.hooks import collect_all
 
-datas = [('Program_Files', 'Program_Files'), ('Program_Files', 'Program_Files'), ('app_logo.ico', '.')]
+datas = [('Program_Files', 'Program_Files'), ('app_logo.ico', '.')]
 binaries = []
 hiddenimports = []
 tmp_ret = collect_all('playwright')
