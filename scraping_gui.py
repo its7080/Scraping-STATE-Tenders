@@ -41,6 +41,7 @@ import sys
 import threading
 import time
 import tkinter as tk
+from collections import deque
 from tkinter import messagebox, filedialog
 
 import customtkinter as ctk
@@ -87,7 +88,11 @@ class _QueueHandler(logging.Handler):
         self.q = q
 
     def emit(self, record: logging.LogRecord):
-        self.q.put(self.format(record))
+        try:
+            self.q.put_nowait(self.format(record))
+        except queue.Full:
+            # Keep UI responsive under very noisy logs by dropping overflow.
+            pass
 
 
 # =======================
@@ -928,6 +933,41 @@ class SettingsPanel(ctk.CTkToplevel):
 from email.mime.multipart import MIMEMultipart as MIMEMultipart_import
 
 
+def show_startup_splash() -> tk.Tk:
+    """Show a lightweight loading window while the main GUI initializes."""
+    splash = tk.Tk()
+    splash.overrideredirect(True)
+    splash.configure(bg="#111111")
+
+    width, height = 420, 170
+    x = (splash.winfo_screenwidth() - width) // 2
+    y = (splash.winfo_screenheight() - height) // 2
+    splash.geometry(f"{width}x{height}+{x}+{y}")
+
+    container = tk.Frame(splash, bg="#111111", bd=1, relief="solid", highlightthickness=0)
+    container.pack(fill="both", expand=True, padx=1, pady=1)
+
+    tk.Label(
+        container,
+        text="State Tender Scraper",
+        font=("Segoe UI", 16, "bold"),
+        fg="#F3F3F3",
+        bg="#111111",
+    ).pack(pady=(34, 8))
+
+    tk.Label(
+        container,
+        text="Loading application, please wait...",
+        font=("Segoe UI", 11),
+        fg="#BFBFBF",
+        bg="#111111",
+    ).pack()
+
+    splash.update_idletasks()
+    splash.update()
+    return splash
+
+
 # =======================
 # MAIN APPLICATION WINDOW
 # =======================
@@ -943,7 +983,8 @@ class App(ctk.CTk):
         # State
         self._running         = False
         self._start_time      = 0.0
-        self._log_queue       = queue.Queue()
+        self._log_queue       = queue.Queue(maxsize=5000)
+        self._log_history     = deque(maxlen=3000)
         self._portal_cards:   dict[str, PortalCard] = {}
         self._total_scraped   = 0
         self._log_line_count  = 0
@@ -1087,6 +1128,7 @@ class App(ctk.CTk):
                            values=["All", "Warnings & Errors", "Errors only"],
                            width=148, height=26, font=FONT_SMALL).grid(
             row=0, column=2, padx=(0, 6))
+        self._log_filter.trace_add("write", lambda *_: self._rerender_logs())
 
         ctk.CTkButton(log_hdr, text="Clear", width=56, height=26,
                        font=FONT_SMALL, fg_color="transparent", border_width=1,
@@ -1302,30 +1344,58 @@ class App(ctk.CTk):
 
     # ── Log panel ─────────────────────────────────────────────────────
     def _poll_logs(self):
+        drained = []
         try:
-            while True:
-                msg = self._log_queue.get_nowait()
-                upper = msg.upper()
-                if "ERROR" in upper or "CRITICAL" in upper:
-                    tag = "ERROR"
-                elif "WARNING" in upper:
-                    tag = "WARNING"
-                else:
-                    tag = "INFO"
-
-                # Apply log level filter
-                filt = self._log_filter.get()
-                if filt == "Warnings & Errors" and tag == "INFO":
-                    continue
-                if filt == "Errors only" and tag != "ERROR":
-                    continue
-
-                self._append_log(msg, tag)
+            for _ in range(250):
+                drained.append(self._log_queue.get_nowait())
         except queue.Empty:
             pass
+        if drained:
+            for msg in drained:
+                self._log_history.append((msg, self._tag_for_message(msg)))
+            self._append_visible_logs(drained)
         self.after(120, self._poll_logs)
 
+    def _tag_for_message(self, msg: str) -> str:
+        upper = msg.upper()
+        if "ERROR" in upper or "CRITICAL" in upper:
+            return "ERROR"
+        if "WARNING" in upper:
+            return "WARNING"
+        return "INFO"
+
+    def _is_visible_for_filter(self, tag: str) -> bool:
+        filt = self._log_filter.get()
+        if filt == "Warnings & Errors":
+            return tag != "INFO"
+        if filt == "Errors only":
+            return tag == "ERROR"
+        return True
+
+    def _append_visible_logs(self, raw_messages: list[str]):
+        batch = []
+        for msg in raw_messages:
+            tag = self._tag_for_message(msg)
+            if self._is_visible_for_filter(tag):
+                batch.append((msg.rstrip() + "\n", tag))
+        if not batch:
+            return
+        self._log_box.configure(state="normal")
+        for line, tag in batch:
+            self._log_box.insert("end", line, tag)
+            self._log_line_count += 1
+        if self._log_line_count > 1000:
+            remove_lines = max(1, self._log_line_count - 1000)
+            self._log_box.delete("1.0", f"{remove_lines + 1}.0")
+            self._log_line_count -= remove_lines
+        if self._autoscroll.get():
+            self._log_box.see("end")
+        self._log_box.configure(state="disabled")
+
     def _append_log(self, text: str, tag: str = "INFO"):
+        self._log_history.append((text, tag))
+        if not self._is_visible_for_filter(tag):
+            return
         self._log_box.configure(state="normal")
         self._log_box.insert("end", text.rstrip() + "\n", tag)
         self._log_line_count += 1
@@ -1341,6 +1411,24 @@ class App(ctk.CTk):
         self._log_box.delete("1.0", "end")
         self._log_box.configure(state="disabled")
         self._log_line_count = 0
+        self._log_history.clear()
+
+    def _rerender_logs(self):
+        self._log_box.configure(state="normal")
+        self._log_box.delete("1.0", "end")
+        self._log_line_count = 0
+        visible = [
+            (msg.rstrip() + "\n", tag)
+            for msg, tag in self._log_history
+            if self._is_visible_for_filter(tag)
+        ]
+        visible = visible[-1000:]
+        for line, tag in visible:
+            self._log_box.insert("end", line, tag)
+            self._log_line_count += 1
+        if self._autoscroll.get():
+            self._log_box.see("end")
+        self._log_box.configure(state="disabled")
 
     def _export_log(self):
         path = filedialog.asksaveasfilename(
@@ -1455,7 +1543,12 @@ engine._stop_requested = False
 # ENTRY POINT
 # =======================
 def main():
+    splash = show_startup_splash()
     app = App()
+    try:
+        splash.destroy()
+    except Exception:
+        pass
     app.mainloop()
 
 
