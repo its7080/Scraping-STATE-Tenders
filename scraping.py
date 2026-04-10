@@ -692,7 +692,7 @@ class Extr:
         no_scraped = 0
         page_num   = 0
         today_str  = datetime.datetime.now().date().strftime("%d/%m/%Y")
-        url_label  = f"{self.name}_Tenders"
+        url_label  = f"{self.name}"
 
         def g(xpath, wait=False):
             return self._get_text(page, xpath, wait=wait)
