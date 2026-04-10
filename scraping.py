@@ -874,7 +874,15 @@ def merge_xlsx_files(source_dir: str, temp_dir: str) -> str:
 
                 for row_values in df.itertuples(index=False, name=None):
                     for col_idx, value in enumerate(row_values):
-                        worksheet.write(next_row, col_idx, value)
+                        # xlsxwriter can't write NaN/Inf as numbers unless workbook
+                        # is created with special options; normalize to blank cells.
+                        if pd.isna(value):
+                            safe_value = None
+                        elif isinstance(value, (int, float, np.integer, np.floating)) and np.isinf(value):
+                            safe_value = None
+                        else:
+                            safe_value = value
+                        worksheet.write(next_row, col_idx, safe_value)
                     next_row += 1
 
                 individual_files.append(fpath)
