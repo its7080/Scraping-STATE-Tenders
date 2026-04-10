@@ -653,17 +653,22 @@ class Extr:
             except Exception as exc:
                 log.warning("[%s] Form submit error: %s", self.name, exc)
                 continue
-            saved_path = save_png_copy(
-                cap_path=r"Program_Files/temp.png",  # raw string for Windows safety
-                result=captcha_text
-            )
+            cap_path = os.path.join(CAP_DIR, f"{self.name}.png")
             if "No Tenders found." in page.content():
+                try:
+                    save_png_copy(cap_path=cap_path, result=captcha_text)
+                except Exception as exc:
+                    log.warning("[%s] Failed to archive CAPTCHA PNG: %s", self.name, exc)
                 log.info("[%s] Portal returned no tenders.", self.name)
                 return 0, None
             links = page.query_selector_all(
                 "xpath=//td/a[starts-with(@id,'DirectLink_0')]")
             links_count = len(links)
             if links_count > 0:
+                try:
+                    save_png_copy(cap_path=cap_path, result=captcha_text)
+                except Exception as exc:
+                    log.warning("[%s] Failed to archive CAPTCHA PNG: %s", self.name, exc)
                 log.info("[%s] %d result links found.", self.name, links_count)
                 break
             log.warning("[%s] No result links after submit.", self.name)
