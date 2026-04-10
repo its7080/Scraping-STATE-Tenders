@@ -836,75 +836,66 @@ def send_mail(merged_file: str | None = None, attach_log: bool = False):
 # =======================
 
 def merge_xlsx_files(source_dir: str, temp_dir: str) -> str:
-    # Create temp directory if it doesn't exist
+    """
+    Merge all per-portal xlsx files into one workbook using a streaming write
+    strategy so RAM usage stays bounded even with large datasets.
+    """
     os.makedirs(temp_dir, exist_ok=True)
 
-    # Create an empty DataFrame to store merged data
-    merged = pd.DataFrame()
-
-    # List to store file paths of individual Excel files
-    individual_files = []
-
-    # Loop through all files in the source directory
-    for fname in os.listdir(source_dir):
-
-        # Skip files that are not .xlsx OR already merged files
-        if not fname.endswith(".xlsx") or fname.startswith(MERGED_FILE_PREFIX):
-            continue
-
-        # Full path of the file
-        fpath = os.path.join(source_dir, fname)
-
-        try:
-            # Read Excel file into DataFrame
-            df = pd.read_excel(fpath)
-
-            # Drop columns where all values are NaN (empty columns)
-            df = df.dropna(how="all", axis=1)
-
-            # Replace "NA" string values with 0.00
-            df.replace("NA", 0.00, inplace=True)
-
-            # Add a new column "Get Date" with current date
-            df["Get Date"] = datetime.datetime.now().strftime("%d/%m/%Y")
-
-            # Append current DataFrame to merged DataFrame
-            merged = pd.concat([merged, df], ignore_index=True)
-
-            # Store file path for possible deletion later
-            individual_files.append(fpath)
-
-        except Exception as exc:
-            # Log warning if file cannot be read
-            log.warning("Could not read %s: %s", fpath, exc)
-
-    # Create timestamp for unique output filename
     ts = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-
-    # Define output file path
     output_path = os.path.join(PROGRAM_FILES_DIR, f"{MERGED_FILE_PREFIX}_{ts}.xlsx")
 
-    # Save merged DataFrame to Excel file
-    merged.to_excel(output_path, index=False)
+    individual_files: list[str] = []
+    get_date = datetime.datetime.now().strftime("%d/%m/%Y")
+    master_columns: list[str] | None = None
+    next_row = 1
 
-    # Log success message
+    workbook = xlsxwriter.Workbook(output_path)
+    worksheet = workbook.add_worksheet("MergedTenders")
+
+    try:
+        for fname in sorted(os.listdir(source_dir)):
+            if not fname.endswith(".xlsx") or fname.startswith(MERGED_FILE_PREFIX):
+                continue
+
+            fpath = os.path.join(source_dir, fname)
+            try:
+                df = pd.read_excel(fpath)
+                df = df.dropna(how="all", axis=1)
+                df.replace("NA", 0.00, inplace=True)
+                df["Get Date"] = get_date
+
+                if master_columns is None:
+                    master_columns = list(df.columns)
+                    for col_idx, column in enumerate(master_columns):
+                        worksheet.write(0, col_idx, column)
+                else:
+                    df = df.reindex(columns=master_columns)
+
+                for row_values in df.itertuples(index=False, name=None):
+                    for col_idx, value in enumerate(row_values):
+                        worksheet.write(next_row, col_idx, value)
+                    next_row += 1
+
+                individual_files.append(fpath)
+
+                # Release per-file dataframe memory before processing next file.
+                del df
+            except Exception as exc:
+                log.warning("Could not read %s: %s", fpath, exc)
+    finally:
+        workbook.close()
+
     log.info("Master xlsx → %s", output_path)
 
-    # Optional: delete original individual files after merging
     if DELETE_INDIVIDUAL_AFTER_MERGE:
         for fpath in individual_files:
             try:
-                # Delete file
                 os.remove(fpath)
-
-                # Log deletion
                 log.info("Deleted individual file: %s", os.path.basename(fpath))
-
             except Exception as exc:
-                # Log warning if deletion fails
                 log.warning("Could not delete %s: %s", fpath, exc)
 
-    # Return the path of the merged Excel file
     return output_path
 
 
