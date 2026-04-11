@@ -405,6 +405,10 @@ def save_png_copy(cap_path: str, result: str, folder_path: str = "Program_Files/
         str: Full path of saved file
     """
 
+    # Normalize paths to avoid cwd/thread-related relative path issues
+    cap_path = os.path.abspath(cap_path)
+    folder_path = os.path.abspath(folder_path)
+
     # Ensure folder exists
     os.makedirs(folder_path, exist_ok=True)
 
@@ -420,6 +424,9 @@ def save_png_copy(cap_path: str, result: str, folder_path: str = "Program_Files/
     dest_path = os.path.join(folder_path, f"{file_name}.png")
 
     try:
+        if not os.path.isfile(cap_path):
+            raise FileNotFoundError(f"Source PNG not found: {cap_path}")
+
         # Copy file (preserve metadata)
         shutil.copy2(cap_path, dest_path)
 
