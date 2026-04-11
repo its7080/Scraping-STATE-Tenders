@@ -1454,8 +1454,48 @@ engine._stop_requested = False
 # =======================
 # ENTRY POINT
 # =======================
+def show_startup_splash() -> tk.Tk:
+    splash = tk.Tk()
+    splash.overrideredirect(True)
+    splash.attributes("-topmost", True)
+    splash.configure(bg="#1F1F1F")
+
+    width, height = 420, 140
+    screen_w = splash.winfo_screenwidth()
+    screen_h = splash.winfo_screenheight()
+    pos_x = (screen_w - width) // 2
+    pos_y = (screen_h - height) // 2
+    splash.geometry(f"{width}x{height}+{pos_x}+{pos_y}")
+
+    container = tk.Frame(splash, bg="#2B2B2B", bd=0, highlightthickness=1,
+                         highlightbackground="#3A3A3A")
+    container.pack(fill="both", expand=True, padx=1, pady=1)
+
+    tk.Label(
+        container,
+        text="State Tender Scraper",
+        font=("Segoe UI Variable Display", 15, "bold"),
+        fg="#E5E5E5",
+        bg="#2B2B2B",
+    ).pack(pady=(26, 8))
+
+    tk.Label(
+        container,
+        text="Loading, please wait...",
+        font=("Segoe UI Variable Text", 11),
+        fg="#BDBDBD",
+        bg="#2B2B2B",
+    ).pack()
+
+    splash.update_idletasks()
+    splash.update()
+    return splash
+
+
 def main():
+    splash = show_startup_splash()
     app = App()
+    splash.destroy()
     app.mainloop()
 
 
