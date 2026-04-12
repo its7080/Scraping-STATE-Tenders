@@ -4,20 +4,22 @@
     "sender_email_password": "Auto@2023",
     "notification_emailids": [
         "am7059141480@gmail.com",
-        "anupammanna07@gmail.com"
+        "ajhunjhunwala@royalconstruct.com",
+        "support@royalconstruct.com",
+        "bpatra@royalconstruct.com"
     ],
-    "dump_location": "C:/Users/its70/OneDrive/Documents/python/Scraping-STATE-Tenders/Program_Files/Output",
+    "dump_location": "G:/Scraping-STATE-Tenders/Program_Files/Output",
     "smtp_server": "smtp.office365.com",
     "smtp_port": 587,
     "email_subject": "State Tender Scraping Report",
     "attach_log_to_email": true,
-    "max_workers": 2,
+    "max_workers": 8,
     "captcha_attempts": 10,
     "page_timeout_sec": 240,
     "nav_retries": 8,
     "page_load_wait_sec": 10,
     "ecv_pass2_threshold": 99999999,
-    "output_dir": "C:/Users/its70/OneDrive/Documents/python/Scraping-STATE-Tenders/Program_Files/Output",
+    "output_dir": "G:/Scraping-STATE-Tenders/Program_Files/Output",
     "merged_file_prefix": "merged_State",
     "delete_individual_after_merge": false,
     "log_retention_days": 30

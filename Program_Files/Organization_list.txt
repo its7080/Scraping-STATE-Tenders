@@ -1,21 +1,21 @@
 Andaman_Tenders: https://eprocure.andamannicobar.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
 Arunachal_Tenders: https://arunachaltenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
-# Assam_Tenders: https://assamtenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
-# Coal_India_Tenders: https://coalindiatenders.nic.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
-# Defence_Tenders: https://defproc.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
-# E_Tenders: https://etenders.gov.in/eprocure/app?page=FrontEndAdvancedSearch&service=page
-# Eprocure_Tenders: https://eprocure.gov.in/eprocure/app?page=FrontEndAdvancedSearch&service=page
-# Himachal_Tenders: https://hptenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
-# IOCL_Tenders: https://iocletenders.nic.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
-# J_and_K_Tenders: https://jktenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
-# Jharkhand_Tenders: https://jharkhandtenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
-# Maharashtra_Tenders: https://mahatenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
-# MP_Tenders: https://mptenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
-# NRRDA_Tenders: https://pmgsytenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
-# NTPC_Tenders: https://eprocurentpc.nic.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
-# Odisha_Tenders: https://tendersodisha.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
-# Tripura_Tenders: https://tripuratenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
-# UP_Tenders: https://etender.up.nic.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
-# West_Bengal_Tenders: https://wbtenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
-# Uttarakhand_Tenders: https://uktenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
-# Rajasthan_Tenders: https://eproc.rajasthan.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
+Assam_Tenders: https://assamtenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
+Coal_India_Tenders: https://coalindiatenders.nic.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
+Defence_Tenders: https://defproc.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
+E_Tenders: https://etenders.gov.in/eprocure/app?page=FrontEndAdvancedSearch&service=page
+Eprocure_Tenders: https://eprocure.gov.in/eprocure/app?page=FrontEndAdvancedSearch&service=page
+Himachal_Tenders: https://hptenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
+IOCL_Tenders: https://iocletenders.nic.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
+J_and_K_Tenders: https://jktenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
+Jharkhand_Tenders: https://jharkhandtenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
+Maharashtra_Tenders: https://mahatenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
+MP_Tenders: https://mptenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
+NRRDA_Tenders: https://pmgsytenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
+NTPC_Tenders: https://eprocurentpc.nic.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
+Odisha_Tenders: https://tendersodisha.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
+Tripura_Tenders: https://tripuratenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
+UP_Tenders: https://etender.up.nic.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
+West_Bengal_Tenders: https://wbtenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
+Uttarakhand_Tenders: https://uktenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
+Rajasthan_Tenders: https://eproc.rajasthan.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page

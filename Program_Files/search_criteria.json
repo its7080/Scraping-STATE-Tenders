@@ -1,6 +1,6 @@
 [
     {
-        "label": "Pass 1 \u2014 ECV greater than 0",
+        "label": "Pass 1 \u2014 ECV Equal to 0",
         "enabled": true,
         "tender_type": 1,
         "value_criteria": 4,
@@ -27,7 +27,7 @@
         "efe": false
     },
     {
-        "label": "Pass 2 \u2014 ECV equal to 99999999",
+        "label": "Pass 2 \u2014 ECV Greater than  99999999",
         "enabled": true,
         "tender_type": 1,
         "value_criteria": 4,
