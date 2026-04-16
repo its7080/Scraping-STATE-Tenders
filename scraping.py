@@ -115,6 +115,27 @@ CONFIG_FILE   = os.path.join(PROGRAM_FILES_DIR, "Configration.json")
 CRITERIA_FILE = os.path.join(PROGRAM_FILES_DIR, "search_criteria.json")
 ORG_FILE      = os.path.join(PROGRAM_FILES_DIR, "Organization_list.txt")
 
+FIXED_TENDER_COLUMNS = [
+    "Organisation Chain",
+    "Tender Reference Number",
+    "Tender ID",
+    "EMD Amount in Rs",
+    "Title",
+    "Work Description",
+    "Tender Value in Rs",
+    "Pre Bid Meeting Date",
+    "Bid Submission End Date",
+    "Published Date",
+    "Tender Type",
+    "Tender Category",
+    "Tender Fee",
+    "Location",
+    "Period Of Work(Days)",
+    "Document Download / Sale End Date",
+    "URL",
+    "GET",
+]
+
 
 # =======================
 # LOGGING
@@ -154,6 +175,16 @@ def save_config(cfg: dict):
     """Write cfg back to Configration.json atomically."""
     with open(CONFIG_FILE, "w", encoding="utf-8") as _f:
         json.dump(cfg, _f, indent=4)
+
+
+def ensure_fixed_tender_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Enforce the fixed tender output schema for every xlsx file.
+    Missing columns are added as blank and extra columns are dropped.
+    """
+    if "Get Date" in df.columns and "GET" not in df.columns:
+        df = df.rename(columns={"Get Date": "GET"})
+    return df.reindex(columns=FIXED_TENDER_COLUMNS)
 
 
 # =======================
@@ -690,15 +721,7 @@ class Extr:
         workbook  = xlsxwriter.Workbook(file_path)
         ws        = workbook.add_worksheet("ListOfTenders")
 
-        for col, h in enumerate([
-            "Organisation Chain", "Tender Reference Number", "Tender ID",
-            "EMD Amount in Rs", "Title", "Work Description",
-            "Tender Value in Rs", "Pre Bid Meeting Date",
-            "Bid Submission End Date", "Published Date",
-            "Tender Type", "Tender Category", "Tender Fee",
-            "Location", "Period Of Work(Days)",
-            "Document Download / Sale End Date", "URL", "GET",
-        ]):
+        for col, h in enumerate(FIXED_TENDER_COLUMNS):
             ws.write(0, col, h)
 
         no_scraped = 0
@@ -854,13 +877,15 @@ def merge_xlsx_files(source_dir: str, temp_dir: str) -> str:
 
     individual_files: list[str] = []
     get_date = datetime.datetime.now().strftime("%d/%m/%Y")
-    master_columns: list[str] | None = None
     next_row = 1
 
     workbook = xlsxwriter.Workbook(output_path)
     worksheet = workbook.add_worksheet("MergedTenders")
 
     try:
+        for col_idx, column in enumerate(FIXED_TENDER_COLUMNS):
+            worksheet.write(0, col_idx, column)
+
         for fname in sorted(os.listdir(source_dir)):
             if not fname.endswith(".xlsx") or fname.startswith(MERGED_FILE_PREFIX):
                 continue
@@ -870,14 +895,8 @@ def merge_xlsx_files(source_dir: str, temp_dir: str) -> str:
                 df = pd.read_excel(fpath)
                 df = df.dropna(how="all", axis=1)
                 df.replace("NA", 0.00, inplace=True)
-                df["Get Date"] = get_date
-
-                if master_columns is None:
-                    master_columns = list(df.columns)
-                    for col_idx, column in enumerate(master_columns):
-                        worksheet.write(0, col_idx, column)
-                else:
-                    df = df.reindex(columns=master_columns)
+                df["GET"] = get_date
+                df = ensure_fixed_tender_columns(df)
 
                 for row_values in df.itertuples(index=False, name=None):
                     for col_idx, value in enumerate(row_values):
@@ -1089,6 +1108,7 @@ def run_scraping():
         try:
             df = pd.read_excel(src)
             df.replace("NA", 0.00, inplace=True)
+            df = ensure_fixed_tender_columns(df)
             df.to_excel(os.path.join(OUTPUT_DIR, fname), index=False)
             if DUMP_LOCATION and DUMP_LOCATION != OUTPUT_DIR:
                 create_folder_if_not_exists(DUMP_LOCATION)
