@@ -1,7 +1,7 @@
 [
     {
         "label": "Pass 1 \u2014 ECV Equal to 0",
-        "enabled": true,
+        "enabled": false,
         "tender_type": 1,
         "value_criteria": 4,
         "value_param": 1,

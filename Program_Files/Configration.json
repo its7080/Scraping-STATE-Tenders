@@ -3,10 +3,7 @@
     "sender_email_id": "tenderautomation@royalconstruct.in",
     "sender_email_password": "Auto@2023",
     "notification_emailids": [
-        "am7059141480@gmail.com",
-        "ajhunjhunwala@royalconstruct.com",
-        "support@royalconstruct.com",
-        "bpatra@royalconstruct.com"
+        "am7059141480@gmail.com"
     ],
     "dump_location": "G:/Scraping-STATE-Tenders/Program_Files/Output",
     "smtp_server": "smtp.office365.com",
