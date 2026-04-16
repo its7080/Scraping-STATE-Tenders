@@ -731,27 +731,37 @@ class Extr:
                     state="attached", timeout=20_000)
 
                 row = (page_num * 20) + j
-                ws.write(row,  0, g("//*[text()='Organisation Chain']/parent::*/following-sibling::td[1]", wait=True))
-                ws.write(row,  1, g("//*[text()='Tender Reference Number']/parent::*/following-sibling::td[1]"))
-                ws.write(row,  2, g("//*[text()='Tender ID']/parent::*/following-sibling::td[1]", wait=True))
-                ws.write(row,  3, g("//*[contains(text(),'EMD Amount in')]/following-sibling::td[1]"))
-                ws.write(row,  4, g("//*[text()='Title']/parent::*/following-sibling::td[1]"))
-                ws.write(row,  5, g("//*[text()='Work Description']/parent::*/following-sibling::td[1]"))
-                ws.write(row,  6, g("//*[contains(text(),'Tender Value in')]/following-sibling::td[1]"))
-                ws.write(row,  7, g("//*[text()='Pre Bid Meeting Date']/parent::*/following-sibling::td[1]"))
-                ws.write(row,  8, g("//*[text()='Bid Submission End Date']/parent::*/following-sibling::td[1]"))
-                ws.write(row,  9, g("//*[text()='Published Date']/parent::*/following-sibling::td[1]"))
-                ws.write(row, 10, g("//*[contains(text(),'Tender Type')]/following-sibling::td[1]"))
-                ws.write(row, 11, g("//*[contains(text(),'Tender Category')]/following-sibling::td[1]", wait=True))
-                if self.name not in ("Coal_India", "IOCL", "West_Bengal"):
-                    ws.write(row, 12, g("//*[contains(text(),'Tender Fee in')]/following-sibling::td[1]", wait=True))
-                else:
-                    ws.write(row, 12, None)
-                ws.write(row, 13, g("//*[text()='Location']/parent::*/following-sibling::td[1]"))
-                ws.write(row, 14, g("//*[text()='Period Of Work(Days)']/parent::*/following-sibling::td[1]"))
-                ws.write(row, 15, g("//*[text()='Document Download / Sale End Date']/parent::*/following-sibling::td[1]"))
-                ws.write(row, 16, url_label)
-                ws.write(row, 17, today_str)
+                tender_row = {
+                    "Organisation Chain": g("//*[text()='Organisation Chain']/parent::*/following-sibling::td[1]", wait=True),
+                    "Tender Reference Number": g("//*[text()='Tender Reference Number']/parent::*/following-sibling::td[1]"),
+                    "Tender ID": g("//*[text()='Tender ID']/parent::*/following-sibling::td[1]", wait=True),
+                    "EMD Amount in Rs": g("//*[contains(text(),'EMD Amount in')]/following-sibling::td[1]"),
+                    "Title": g("//*[text()='Title']/parent::*/following-sibling::td[1]"),
+                    "Work Description": g("//*[text()='Work Description']/parent::*/following-sibling::td[1]"),
+                    "Tender Value in Rs": g("//*[contains(text(),'Tender Value in')]/following-sibling::td[1]"),
+                    "Pre Bid Meeting Date": g("//*[text()='Pre Bid Meeting Date']/parent::*/following-sibling::td[1]"),
+                    "Bid Submission End Date": g("//*[text()='Bid Submission End Date']/parent::*/following-sibling::td[1]"),
+                    "Published Date": g("//*[text()='Published Date']/parent::*/following-sibling::td[1]"),
+                    "Tender Type": g("//*[contains(text(),'Tender Type')]/following-sibling::td[1]"),
+                    "Tender Category": g("//*[contains(text(),'Tender Category')]/following-sibling::td[1]", wait=True),
+                    "Tender Fee": (
+                        g("//*[contains(text(),'Tender Fee in')]/following-sibling::td[1]", wait=True)
+                        if self.name not in ("Coal_India", "IOCL", "West_Bengal")
+                        else None
+                    ),
+                    "Location": g("//*[text()='Location']/parent::*/following-sibling::td[1]"),
+                    "Period Of Work(Days)": g("//*[text()='Period Of Work(Days)']/parent::*/following-sibling::td[1]"),
+                    "Document Download / Sale End Date": g("//*[text()='Document Download / Sale End Date']/parent::*/following-sibling::td[1]"),
+                    "URL": url_label,
+                    "GET": today_str,
+                }
+
+                for col, value in enumerate(tender_row.values()):
+                    ws.write(row, col, value)
+
+                log.info("[%s] Tender record %d values:", self.name, row)
+                for field, value in tender_row.items():
+                    log.info("  %s: %s", field, value)
 
                 back = page.query_selector(
                     "xpath=//a[@id='DirectLink_11' and text()='Back']")
