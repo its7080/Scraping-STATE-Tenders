@@ -760,7 +760,8 @@ class Extr:
                 ws.write(row,  3, g("//*[contains(text(),'EMD Amount in')]/following-sibling::td[1]"))
                 ws.write(row,  4, g("//*[text()='Title']/parent::*/following-sibling::td[1]"))
                 ws.write(row,  5, g("//*[text()='Work Description']/parent::*/following-sibling::td[1]"))
-                ws.write(row,  6, g("//*[contains(text(),'Tender Value in')]/following-sibling::td[1]"))
+                ws.write(row,  6, g("//*[text()='Tender Value in ₹ ']/parent::*/following-sibling::td[1]"))
+
                 ws.write(row,  7, g("//*[text()='Pre Bid Meeting Date']/parent::*/following-sibling::td[1]"))
                 ws.write(row,  8, g("//*[text()='Bid Submission End Date']/parent::*/following-sibling::td[1]"))
                 ws.write(row,  9, g("//*[text()='Published Date']/parent::*/following-sibling::td[1]"))

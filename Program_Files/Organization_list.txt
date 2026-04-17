@@ -1,8 +1,8 @@
 Andaman_Tenders: https://eprocure.andamannicobar.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
 Arunachal_Tenders: https://arunachaltenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
-# Assam_Tenders: https://assamtenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
-# Coal_India_Tenders: https://coalindiatenders.nic.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
-# Defence_Tenders: https://defproc.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
+Assam_Tenders: https://assamtenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
+Coal_India_Tenders: https://coalindiatenders.nic.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
+Defence_Tenders: https://defproc.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
 # E_Tenders: https://etenders.gov.in/eprocure/app?page=FrontEndAdvancedSearch&service=page
 # Eprocure_Tenders: https://eprocure.gov.in/eprocure/app?page=FrontEndAdvancedSearch&service=page
 # Himachal_Tenders: https://hptenders.gov.in/nicgep/app?page=FrontEndAdvancedSearch&service=page
